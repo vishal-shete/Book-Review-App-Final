@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { bookAPI } from '../../services/api';
+import API_BASE_URL from '../../config/api';
 import './AddBookPage.css';
 
 function AddBookPage() {
@@ -25,9 +25,20 @@ function AddBookPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await bookAPI.createBook(formData);
-            navigate('/');
-        } catch (err) {
+            const response = await fetch(`${API_BASE_URL}/api/books`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) {
+                navigate('/');
+            } else {
+                setError('Failed to add book. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding book:', error);
             setError('Failed to add book. Please try again.');
         }
     };

@@ -1,8 +1,25 @@
 import { Link } from 'react-router-dom';
 import StarRating from '../StarRating/StarRating';
 import './BookList.css';
+import API_BASE_URL from '../../config/api';
+import { useEffect, useState } from 'react';
 
-function BookList({ books }) {
+function BookList() {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        const fetchBooks = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/books`);
+                const data = await response.json();
+                setBooks(data);
+            } catch (error) {
+                console.error('Error fetching books:', error);
+            }
+        };
+        fetchBooks();
+    }, []);
+
     return (
         <div className="book-grid">
             {books.map((book) => (
