@@ -5,19 +5,30 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS configuration
-app.use(cors({
-    origin: [
-        'https://book-review-app-final.vercel.app',
-        'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app',
-        'http://localhost:3000'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
-    credentials: true
-}));
+// CORS configuration for development
+const corsOptions = process.env.NODE_ENV === 'production' 
+    ? {
+        origin: [
+            'https://book-review-app-final.vercel.app',
+            'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app'
+        ],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization']
+    }
+    : {
+        origin: true, // Allow all origins in development
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization']
+    };
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
+
+// Add this before your routes
+app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
 // Test route
 app.get('/', (req, res) => {
