@@ -15,10 +15,14 @@ function BookList() {
                         'Content-Type': 'application/json'
                     }
                 });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 setBooks(data);
             } catch (error) {
                 console.error('Error fetching books:', error);
+                // Maybe set an error state here to show to the user
             }
         };
         fetchBooks();
