@@ -10,7 +10,12 @@ function BookList() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/books`);
+                const response = await fetch(`${API_BASE_URL}/api/books`, {
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
                 const data = await response.json();
                 setBooks(data);
             } catch (error) {
