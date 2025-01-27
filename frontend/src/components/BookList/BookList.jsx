@@ -11,7 +11,6 @@ function BookList() {
         const fetchBooks = async () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/books`, {
-                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json'
                     }
