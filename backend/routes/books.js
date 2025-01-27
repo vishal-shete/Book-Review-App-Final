@@ -7,9 +7,17 @@ const {
     updateBook,
     deleteBook
 } = require('../controllers/bookController');
+const Book = require('../models/Book');
 
 // Get all books
-router.get('/', getAllBooks);
+router.get('/', async (req, res) => {
+    try {
+        const books = await Book.find();
+        res.json(books);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // Get a specific book
 router.get('/:id', getBook);
