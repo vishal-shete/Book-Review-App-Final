@@ -1,70 +1,189 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Book Review App
 
-## Available Scripts
+A MERN stack application for managing and reviewing books.
 
-In the project directory, you can run:
+## Setup Instructions
 
-### `npm start`
+### Prerequisites
+- Node.js
+- MongoDB
+- npm
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Installation Steps
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **Clone Repository**
+```bash
+git clone <repository-url>
+cd book-review-app
+```
 
-### `npm test`
+2. **Backend Setup**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Navigate to backend
+cd backend
 
-### `npm run build`
+# Install dependencies from package.json
+npm install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Create .env file
+echo "MONGODB_URI=mongodb://localhost:27017/book-review-app
+PORT=5000" > .env
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Start server
+npm run dev
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Frontend Setup**
 
-### `npm run eject`
+# Navigate to frontend
+cd frontend
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Install dependencies
+npm install
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Start application
+npm start
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+### Essential Files Configuration
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Backend Model (models/Book.js)**
+```javascript
+const bookSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    author: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    yearOfPublication: {
+        type: Number,
+        required: true
+    },
+    genre: {
+        type: String,
+        required: true
+    },
+    averageRating: {
+        type: Number,
+        default: 0
+    }
+}, {
+    timestamps: true
+});
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. **Frontend CSS (src/index.css)**
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-### Code Splitting
+body {
+  @apply bg-gray-100;
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+```
 
-### Analyzing the Bundle Size
+3. **Tailwind Configuration (tailwind.config.js)**
+```javascript
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+4. **Backend Dependencies (package.json)**
+```json
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
+```
 
-### Making a Progressive Web App
+### Running the Application
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. **Start Backend Server**
+```bash
+cd backend
+npm run dev
+```
 
-### Advanced Configuration
+2. **Start Frontend Server**
+```bash
+cd frontend
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3. **Access Application**
+- Frontend: http://localhost:3000
+- Backend: http://localhost:5000
 
-### Deployment
+### Features
+- View list of books with ratings
+- Add new books
+- Write reviews and rate books
+- View book details and all reviews
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Troubleshooting
 
-### `npm run build` fails to minify
+1. **MongoDB Issues**
+- Verify MongoDB is running
+- Check connection string in .env
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+2. **Missing Dependencies**
+- Run `npm install` in respective directories
+
+3. **Port Conflicts**
+- Change ports in .env files
+- Use alternate port for frontend
+
+### Project Structure
+```
+book-review-app/
+├── backend/
+│   ├── models/
+│   │   └── Book.js
+│   └── package.json
+└── frontend/
+    ├── src/
+    │   ├── pages/
+    │   │   └── BookDetailPage.js
+    │   ├── components/
+    │   │   └── BookList.js
+    │   └── index.css
+    ├── .gitignore
+    └── tailwind.config.js
+```
+
+### Additional Notes
+- Ensure MongoDB is running before starting backend
+- Both servers must be running for full functionality
+- Check console for error messages
+```
