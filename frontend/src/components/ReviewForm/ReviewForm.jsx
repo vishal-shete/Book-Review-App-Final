@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
+import './ReviewForm.css';
 
 function ReviewForm({ onSubmit }) {
     const [rating, setRating] = useState(0);
@@ -31,22 +32,22 @@ function ReviewForm({ onSubmit }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+        <form onSubmit={handleSubmit} className="review-form">
             {error && (
-                <div className="mb-4 text-red-500 text-sm">{error}</div>
+                <div className="review-error">{error}</div>
             )}
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="rating-field">
+                <label className="rating-label">
                     Rating (required)
                 </label>
-                <div className="flex gap-1">
+                <div className="star-input">
                     {[1, 2, 3, 4, 5].map((value) => (
                         <FaStar
                             key={value}
-                            className={`cursor-pointer w-8 h-8 ${
+                            className={`star-icon ${
                                 value <= (hover || rating)
-                                    ? 'text-yellow-400'
-                                    : 'text-gray-300'
+                                    ? 'star-filled'
+                                    : 'star-empty'
                             }`}
                             onClick={() => setRating(value)}
                             onMouseEnter={() => setHover(value)}
@@ -55,14 +56,14 @@ function ReviewForm({ onSubmit }) {
                     ))}
                 </div>
             </div>
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="review-field">
+                <label className="review-label">
                     Your Review (required)
                 </label>
                 <textarea
                     value={review}
                     onChange={(e) => setReview(e.target.value)}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                    className="review-textarea"
                     rows="4"
                     placeholder="Write your review here..."
                     required
@@ -70,7 +71,7 @@ function ReviewForm({ onSubmit }) {
             </div>
             <button
                 type="submit"
-                className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                className="submit-button"
                 disabled={!rating || !review.trim()}
             >
                 Submit Review

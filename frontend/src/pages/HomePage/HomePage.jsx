@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { bookAPI } from '../services/api';
-import BookList from '../components/BookList';
+import { bookAPI } from '../../services/api';
+import BookList from '../../components/BookList/BookList';
+import './HomePage.css';
 
 function HomePage() {
     const [books, setBooks] = useState([]);
@@ -23,12 +23,12 @@ function HomePage() {
         fetchBooks();
     }, []);
 
-    if (loading) return <div className="text-center">Loading...</div>;
-    if (error) return <div className="text-red-500 text-center">{error}</div>;
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div className="error-message">{error}</div>;
 
     return (
-        <div>
-            <h1 className="text-3xl font-bold mb-8">Book Collection</h1>
+        <div className="home-page">
+            <h1 className="page-title">Book Collection</h1>
             <BookList books={books} />
         </div>
     );

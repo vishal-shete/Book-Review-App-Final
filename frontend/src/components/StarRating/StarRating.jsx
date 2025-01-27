@@ -1,4 +1,5 @@
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import './StarRating.css';
 
 function StarRating({ rating }) {
     const stars = [];
@@ -7,18 +8,18 @@ function StarRating({ rating }) {
 
     for (let i = 1; i <= 5; i++) {
         if (i <= fullStars) {
-            stars.push(<FaStar key={i} className="text-yellow-400" />);
+            stars.push(<FaStar key={i} className="star-filled" />);
         } else if (i === fullStars + 1 && hasHalfStar) {
-            stars.push(<FaStarHalfAlt key={i} className="text-yellow-400" />);
+            stars.push(<FaStarHalfAlt key={i} className="star-filled" />);
         } else {
-            stars.push(<FaRegStar key={i} className="text-yellow-400" />);
+            stars.push(<FaRegStar key={i} className="star-empty" />);
         }
     }
 
     return (
-        <div className="flex items-center">
-            <div className="flex">{stars}</div>
-            <span className="ml-2 text-gray-600">{rating.toFixed(1)}</span>
+        <div className="star-rating">
+            <div className="star-container">{stars}</div>
+            <span className="rating-number">{rating.toFixed(1)}</span>
         </div>
     );
 }

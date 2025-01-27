@@ -1,0 +1,31 @@
+.navbar {
+    background-color: var(--bs-primary);
+    padding: 1rem;
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.navbar-add-button {
+    background-color: white;
+    color: var(--bs-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+}
+
+.navbar-add-button:hover {
+    background-color: #f8f9fa;
+} 

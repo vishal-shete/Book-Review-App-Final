@@ -1,0 +1,21 @@
+.star-rating {
+    display: flex;
+    align-items: center;
+}
+
+.star-container {
+    display: flex;
+}
+
+.star-filled {
+    color: #ffc107;
+}
+
+.star-empty {
+    color: #ffc107;
+}
+
+.rating-number {
+    margin-left: 0.5rem;
+    color: #6c757d;
+} 
