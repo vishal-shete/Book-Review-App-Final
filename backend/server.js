@@ -8,6 +8,7 @@ const app = express();
 // CORS configuration
 app.use(cors({
     origin: [
+        'https://book-review-app-final.vercel.app',
         'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app',
         'http://localhost:3000'
     ],
