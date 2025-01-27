@@ -67,4 +67,29 @@
 
 .view-details-button:hover {
     background-color: var(--bs-primary-dark);
+}
+
+.loading,
+.error-message,
+.no-books {
+    text-align: center;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.error-message {
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    background-color: #f8d7da;
+}
+
+.loading {
+    color: #0056b3;
+}
+
+.no-books {
+    color: #666;
+    font-style: italic;
 } 

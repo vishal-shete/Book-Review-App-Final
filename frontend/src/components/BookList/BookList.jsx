@@ -6,36 +6,49 @@ import { useEffect, useState } from 'react';
 
 function BookList() {
     const [books, setBooks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
+                setLoading(true);
+                setError(null);
+                
                 const response = await fetch(`${API_BASE_URL}/api/books`, {
+                    method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Accept': 'application/json'
                     }
                 });
                 
                 if (!response.ok) {
-                    const text = await response.text();
-                    console.error('Server response:', text);
                     throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Server did not return JSON');
                 }
                 
                 const data = await response.json();
                 setBooks(data);
             } catch (error) {
                 console.error('Error fetching books:', error);
-                // Add error state handling here if needed
+                setError('Failed to load books. Please try again later.');
+            } finally {
+                setLoading(false);
             }
         };
         fetchBooks();
     }, []);
+
+    if (loading) {
+        return <div className="loading">Loading books...</div>;
+    }
+
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
+
+    if (!books.length) {
+        return <div className="no-books">No books found.</div>;
+    }
 
     return (
         <div className="book-grid">

@@ -12,18 +12,48 @@ const Book = require('../models/Book');
 // Get all books
 router.get('/', async (req, res) => {
     try {
-        const books = await Book.find();
-        res.json(books);
+        const books = await Book.find().lean();
+        res.setHeader('Content-Type', 'application/json');
+        res.json(books || []);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error fetching books:', error);
+        res.status(500).json({ 
+            message: 'Error fetching books',
+            error: error.message 
+        });
     }
 });
 
 // Get a specific book
-router.get('/:id', getBook);
+router.get('/:id', async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id).lean();
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.json(book);
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Error fetching book',
+            error: error.message 
+        });
+    }
+});
 
 // Add a new book
-router.post('/', createBook);
+router.post('/', async (req, res) => {
+    try {
+        const book = new Book(req.body);
+        const savedBook = await book.save();
+        res.status(201).json(savedBook);
+    } catch (error) {
+        res.status(400).json({ 
+            message: 'Error creating book',
+            error: error.message 
+        });
+    }
+});
 
 // Update a book
 router.put('/:id', updateBook);

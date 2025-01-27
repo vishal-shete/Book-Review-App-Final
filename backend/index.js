@@ -5,37 +5,20 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS configuration for development
-const corsOptions = process.env.NODE_ENV === 'production' 
-    ? {
-        origin: [
-            'https://book-review-app-final.vercel.app',
-            'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app'
-        ],
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization']
-    }
-    : {
-        origin: true, // Allow all origins in development
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization']
-    };
+// Basic CORS setup
+app.use(cors());
 
-app.use(cors(corsOptions));
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 
-// Add this before your routes
-app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
-
-// Test route
-app.get('/', (req, res) => {
-    res.json({ message: 'Book Review API is running' });
+// Health check route
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Book Review API is running' });
 });
 
-// API routes
+// API routes with explicit path
 app.use('/api/books', require('./routes/books'));
 app.use('/api/reviews', require('./routes/reviews'));
 
@@ -45,9 +28,9 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// Handle 404
-app.use((req, res) => {
-    res.status(404).json({ message: 'Route not found' });
+// Handle 404 for API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ message: 'API route not found' });
 });
 
 // MongoDB Connection
@@ -58,6 +41,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB connected successfully'))
 .catch((err) => console.log('MongoDB connection error:', err));
 
+// Only start the server in development
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
