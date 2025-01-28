@@ -11,13 +11,20 @@ const Book = require('../models/Book');
 
 // Get all books
 router.get('/', async (req, res) => {
+    console.log('GET /api/books route hit');
     try {
         const books = await Book.find().lean();
+        console.log('Books found:', books);
+        
+        // Force JSON content type and proper headers
         res.setHeader('Content-Type', 'application/json');
-        res.json(books || []);
+        res.setHeader('Cache-Control', 'no-store');
+        
+        // Send response
+        return res.status(200).json(books || []);
     } catch (error) {
         console.error('Error fetching books:', error);
-        res.status(500).json({ 
+        return res.status(500).json({ 
             message: 'Error fetching books',
             error: error.message 
         });

@@ -15,6 +15,8 @@ function BookList() {
                 setLoading(true);
                 setError(null);
                 
+                console.log('Fetching from:', `${API_BASE_URL}/api/books`);
+                
                 const response = await fetch(`${API_BASE_URL}/api/books`, {
                     method: 'GET',
                     headers: {
@@ -23,10 +25,20 @@ function BookList() {
                 });
                 
                 if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Server response:', text);
+                    console.error('Response status:', response.status);
+                    console.error('Response headers:', [...response.headers.entries()]);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
-                const data = await response.json();
+                const contentType = response.headers.get('content-type');
+                console.log('Content-Type:', contentType);
+                
+                const text = await response.text();
+                console.log('Response text:', text);
+                
+                const data = JSON.parse(text);
                 setBooks(data);
             } catch (error) {
                 console.error('Error fetching books:', error);
