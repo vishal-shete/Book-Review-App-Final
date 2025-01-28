@@ -15,34 +15,38 @@ function BookList() {
                 setLoading(true);
                 setError(null);
                 
-                console.log('Fetching from:', `${API_BASE_URL}/api/books`);
+                const fullUrl = `${API_BASE_URL}/api/books`;
+                console.log('Fetching from:', fullUrl);
                 
-                const response = await fetch(`${API_BASE_URL}/api/books`, {
+                const response = await fetch(fullUrl, {
                     method: 'GET',
                     headers: {
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
                     }
                 });
-                
-                if (!response.ok) {
-                    const text = await response.text();
-                    console.error('Server response:', text);
-                    console.error('Response status:', response.status);
-                    console.error('Response headers:', [...response.headers.entries()]);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const contentType = response.headers.get('content-type');
-                console.log('Content-Type:', contentType);
+
+                // Log the full response details
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers));
                 
                 const text = await response.text();
-                console.log('Response text:', text);
-                
-                const data = JSON.parse(text);
-                setBooks(data);
+                console.log('Raw response:', text);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                try {
+                    const data = JSON.parse(text);
+                    setBooks(data);
+                } catch (parseError) {
+                    console.error('JSON Parse Error:', parseError);
+                    throw new Error('Invalid response format from server');
+                }
             } catch (error) {
                 console.error('Error fetching books:', error);
-                setError('Failed to load books. Please try again later.');
+                setError(`Failed to load books: ${error.message}`);
             } finally {
                 setLoading(false);
             }

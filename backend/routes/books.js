@@ -16,15 +16,24 @@ router.get('/', async (req, res) => {
         const books = await Book.find().lean();
         console.log('Books found:', books);
         
-        // Force JSON content type and proper headers
+        if (!Array.isArray(books)) {
+            throw new Error('Invalid data format from database');
+        }
+        
+        // Set explicit headers
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Cache-Control', 'no-store');
         
-        // Send response
-        return res.status(200).json(books || []);
+        // Send response with status
+        return res.status(200).json({
+            success: true,
+            data: books,
+            count: books.length
+        });
     } catch (error) {
-        console.error('Error fetching books:', error);
+        console.error('Error in GET /api/books:', error);
         return res.status(500).json({ 
+            success: false,
             message: 'Error fetching books',
             error: error.message 
         });
