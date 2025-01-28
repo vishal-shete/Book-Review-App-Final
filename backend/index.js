@@ -5,10 +5,18 @@ require('dotenv').config();
 
 const app = express();
 
-// Basic CORS setup
-app.use(cors());
+// CORS configuration
+app.use(cors({
+    origin: [
+        'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app',
+        'http://localhost:3000'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Handle preflight requests
+// Pre-flight requests
 app.options('*', cors());
 
 app.use(express.json());
@@ -21,6 +29,11 @@ app.get('/api/health', (req, res) => {
 // API routes with explicit path
 app.use('/api/books', require('./routes/books'));
 app.use('/api/reviews', require('./routes/reviews'));
+
+// Add this after your CORS configuration
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', message: 'API is running' });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

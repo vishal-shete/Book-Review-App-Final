@@ -23,7 +23,8 @@ function BookList() {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    mode: 'cors'
                 });
 
                 // Log the full response details
