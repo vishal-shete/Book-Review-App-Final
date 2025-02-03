@@ -11,9 +11,15 @@ function HomePage() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                console.log('Attempting to fetch from:', `${API_BASE_URL}/api/books`);
-                
-                const response = await fetch(`${API_BASE_URL}/api/books`, {
+                const apiUrl = `${API_BASE_URL}/api/books`;
+                console.log('Fetching from:', apiUrl);
+
+                // First, test the API connection
+                const testResponse = await fetch(`${API_BASE_URL}/api/test`);
+                const testData = await testResponse.json();
+                console.log('API Test Response:', testData);
+
+                const response = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -21,9 +27,9 @@ function HomePage() {
                     }
                 });
 
-                const contentType = response.headers.get('content-type');
-                console.log('Response content-type:', contentType);
-                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers));
+
                 const text = await response.text();
                 console.log('Raw response:', text);
 
@@ -31,13 +37,14 @@ function HomePage() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                try {
-                    const data = JSON.parse(text);
-                    console.log('Parsed data:', data);
-                    setBooks(data.data || []);
-                } catch (parseError) {
-                    console.error('JSON Parse Error:', parseError);
-                    throw new Error('Invalid response format from server');
+                const data = JSON.parse(text);
+                console.log('Parsed data:', data);
+
+                if (data && data.data) {
+                    setBooks(data.data);
+                } else {
+                    console.warn('No books data in response:', data);
+                    setBooks([]);
                 }
             } catch (error) {
                 console.error('Error fetching books:', error);

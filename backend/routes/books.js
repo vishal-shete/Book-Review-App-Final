@@ -8,25 +8,32 @@ const {
     deleteBook
 } = require('../controllers/bookController');
 const Book = require('../models/Book');
+const mongoose = require('mongoose');
 
 // Get all books
 router.get('/', async (req, res) => {
     try {
         console.log('GET /api/books route hit');
         
-        // Set headers first
-        res.setHeader('Content-Type', 'application/json');
-        
+        // Check MongoDB connection
+        if (mongoose.connection.readyState !== 1) {
+            throw new Error('Database not connected');
+        }
+
         const books = await Book.find().lean();
         console.log('Books found:', books);
-        
-        return res.status(200).json({
+
+        // Ensure we're sending JSON
+        res.setHeader('Content-Type', 'application/json');
+        return res.json({
             success: true,
-            data: books,
-            count: books.length
+            data: books || [],
+            count: books ? books.length : 0
         });
     } catch (error) {
         console.error('Error in GET /api/books:', error);
+        // Ensure error response is also JSON
+        res.setHeader('Content-Type', 'application/json');
         return res.status(500).json({ 
             success: false,
             message: 'Error fetching books',

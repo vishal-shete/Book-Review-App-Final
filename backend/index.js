@@ -22,12 +22,22 @@ const corsOptions = process.env.NODE_ENV === 'production'
         allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With']
     };
 
+// MongoDB Connection - Move this before routes
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log('MongoDB connected successfully');
+    console.log('Connection string:', process.env.MONGODB_URI);
+})
+.catch((err) => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit if DB connection fails
+});
+
+// Move all middleware before routes
 app.use(cors(corsOptions));
-
-// Pre-flight requests
-app.options('*', cors(corsOptions));
-
-// Move these before the routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -36,9 +46,18 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Book Review API is running' });
 });
 
-// Test route to verify API is working
-app.get('/api/test', (req, res) => {
-    res.json({ message: 'API is working!' });
+// Basic test route
+app.get('/api/test', async (req, res) => {
+    try {
+        // Test MongoDB connection
+        const isConnected = mongoose.connection.readyState === 1;
+        res.json({ 
+            message: 'API is working!',
+            mongodbStatus: isConnected ? 'connected' : 'disconnected'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // API routes
@@ -65,14 +84,6 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Something went wrong!' });
 });
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected successfully'))
-.catch((err) => console.log('MongoDB connection error:', err));
 
 // Server startup with port retry logic
 const startServer = (port) => {
