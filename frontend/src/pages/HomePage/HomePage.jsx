@@ -18,22 +18,27 @@ function HomePage() {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
-                    },
-                    mode: 'cors'
+                    }
                 });
 
-                console.log('Response status:', response.status);
+                const contentType = response.headers.get('content-type');
+                console.log('Response content-type:', contentType);
                 
+                const text = await response.text();
+                console.log('Raw response:', text);
+
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const data = await response.json();
-                console.log('Received data:', data);
-                
-                setBooks(data.data || []);
+                try {
+                    const data = JSON.parse(text);
+                    console.log('Parsed data:', data);
+                    setBooks(data.data || []);
+                } catch (parseError) {
+                    console.error('JSON Parse Error:', parseError);
+                    throw new Error('Invalid response format from server');
+                }
             } catch (error) {
                 console.error('Error fetching books:', error);
                 setError(error.message);

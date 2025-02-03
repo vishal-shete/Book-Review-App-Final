@@ -27,14 +27,21 @@ app.use(cors(corsOptions));
 // Pre-flight requests
 app.options('*', cors(corsOptions));
 
+// Move these before the routes
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Health check route
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Book Review API is running' });
 });
 
-// API routes with explicit path
+// Test route to verify API is working
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working!' });
+});
+
+// API routes
 app.use('/api/books', require('./routes/books'));
 app.use('/api/reviews', require('./routes/reviews'));
 
@@ -48,15 +55,15 @@ app.get('/test', (req, res) => {
     res.json({ message: 'Server is working!' });
 });
 
-// Error handling middleware
+// Error handling for 404
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ message: 'API route not found' });
+});
+
+// General error handling
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Something went wrong!' });
-});
-
-// Handle 404 for API routes
-app.use('/api/*', (req, res) => {
-    res.status(404).json({ message: 'API route not found' });
 });
 
 // MongoDB Connection

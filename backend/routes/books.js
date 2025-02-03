@@ -11,20 +11,15 @@ const Book = require('../models/Book');
 
 // Get all books
 router.get('/', async (req, res) => {
-    console.log('GET /api/books route hit');
     try {
+        console.log('GET /api/books route hit');
+        
+        // Set headers first
+        res.setHeader('Content-Type', 'application/json');
+        
         const books = await Book.find().lean();
         console.log('Books found:', books);
         
-        if (!Array.isArray(books)) {
-            throw new Error('Invalid data format from database');
-        }
-        
-        // Set explicit headers
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Cache-Control', 'no-store');
-        
-        // Send response with status
         return res.status(200).json({
             success: true,
             data: books,
@@ -43,11 +38,11 @@ router.get('/', async (req, res) => {
 // Get a specific book
 router.get('/:id', async (req, res) => {
     try {
+        res.setHeader('Content-Type', 'application/json');
         const book = await Book.findById(req.params.id).lean();
         if (!book) {
             return res.status(404).json({ message: 'Book not found' });
         }
-        res.setHeader('Content-Type', 'application/json');
         res.json(book);
     } catch (error) {
         res.status(500).json({ 
@@ -60,6 +55,7 @@ router.get('/:id', async (req, res) => {
 // Add a new book
 router.post('/', async (req, res) => {
     try {
+        res.setHeader('Content-Type', 'application/json');
         const book = new Book(req.body);
         const savedBook = await book.save();
         res.status(201).json(savedBook);
