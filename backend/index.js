@@ -6,21 +6,14 @@ require('dotenv').config();
 const app = express();
 
 // CORS configuration
-const corsOptions = process.env.NODE_ENV === 'production' 
-    ? {
-        origin: [
-            'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app'
-        ],
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With']
-    }
-    : {
-        origin: true, // Allow all origins in development
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With']
-    };
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production'
+        ? ['https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app']
+        : ['http://localhost:3001', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+    credentials: false // Change this to false
+};
 
 // MongoDB Connection - Move this before routes
 mongoose.connect(process.env.MONGODB_URI, {
@@ -40,6 +33,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Pre-flight requests
+app.options('*', cors(corsOptions));
 
 // Health check route
 app.get('/api/health', (req, res) => {

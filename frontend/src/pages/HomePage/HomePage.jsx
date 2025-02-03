@@ -14,31 +14,28 @@ function HomePage() {
                 const apiUrl = `${API_BASE_URL}/api/books`;
                 console.log('Fetching from:', apiUrl);
 
-                // First, test the API connection
-                const testResponse = await fetch(`${API_BASE_URL}/api/test`);
-                const testData = await testResponse.json();
-                console.log('API Test Response:', testData);
-
                 const response = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    credentials: 'omit'
                 });
 
-                console.log('Response status:', response.status);
-                console.log('Response headers:', Object.fromEntries(response.headers));
-
-                const text = await response.text();
-                console.log('Raw response:', text);
-
                 if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const data = JSON.parse(text);
-                console.log('Parsed data:', data);
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Response is not JSON");
+                }
+
+                const data = await response.json();
+                console.log('Received data:', data);
 
                 if (data && data.data) {
                     setBooks(data.data);
