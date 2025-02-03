@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { bookAPI } from '../../services/api';
+import API_BASE_URL from '../../config/api';
 import BookList from '../../components/BookList/BookList';
 import './HomePage.css';
 
@@ -11,10 +11,32 @@ function HomePage() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await bookAPI.getAllBooks();
-                setBooks(response.data);
-            } catch (err) {
-                setError('Failed to fetch books');
+                console.log('Attempting to fetch from:', `${API_BASE_URL}/api/books`);
+                
+                const response = await fetch(`${API_BASE_URL}/api/books`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data:', data);
+                
+                setBooks(data.data || []);
+            } catch (error) {
+                console.error('Error fetching books:', error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }

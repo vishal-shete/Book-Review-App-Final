@@ -39,8 +39,9 @@ function BookList() {
                 }
 
                 try {
-                    const data = JSON.parse(text);
-                    setBooks(data);
+                    const jsonData = JSON.parse(text);
+                    // Extract books from the data property
+                    setBooks(jsonData.data || []);
                 } catch (parseError) {
                     console.error('JSON Parse Error:', parseError);
                     throw new Error('Invalid response format from server');
@@ -63,7 +64,7 @@ function BookList() {
         return <div className="error-message">{error}</div>;
     }
 
-    if (!books.length) {
+    if (!books || !books.length) {
         return <div className="no-books">No books found.</div>;
     }
 
