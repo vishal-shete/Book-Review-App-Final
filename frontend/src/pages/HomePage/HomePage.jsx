@@ -20,29 +20,17 @@ function HomePage() {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
+                    mode: 'cors',
                     credentials: 'omit'
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
                     throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const contentType = response.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error("Response is not JSON");
                 }
 
                 const data = await response.json();
                 console.log('Received data:', data);
-
-                if (data && data.data) {
-                    setBooks(data.data);
-                } else {
-                    console.warn('No books data in response:', data);
-                    setBooks([]);
-                }
+                setBooks(data.data || []);
             } catch (error) {
                 console.error('Error fetching books:', error);
                 setError(error.message);

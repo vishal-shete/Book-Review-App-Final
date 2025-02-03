@@ -6,16 +6,23 @@ require('dotenv').config();
 const app = express();
 
 // CORS configuration
+const allowedOrigins = [
+    'https://book-review-app-final-git-main-vishals-projects-15f54387.vercel.app',
+    'http://localhost:3001'
+];
+
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production'
-        ? [
-            'https://book-review-app-final-inc8px7jc-vishals-projects-15f54387.vercel.app',
-            'https://book-review-app-final.vercel.app'
-        ]
-        : ['http://localhost:3001', 'http://localhost:3000'],
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
-    credentials: false
+    credentials: false,
+    optionsSuccessStatus: 200
 };
 
 // MongoDB Connection - Move this before routes
@@ -39,14 +46,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Pre-flight requests
 app.options('*', cors(corsOptions));
-
-// Add security headers
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
 
 // Health check route
 app.get('/api/health', (req, res) => {
